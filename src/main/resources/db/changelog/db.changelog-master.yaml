@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/user_initial.sql
+  - include:
+      file: db/changelog/changeset/post_initial.sql
+  - include:
+      file: db/changelog/changeset/add_published.sql

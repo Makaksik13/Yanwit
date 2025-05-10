@@ -1,0 +1,126 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+    password: password
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      cache:
+        default-ttl: 3600
+        path-to-entities: OS.Yanwit.redis.cache.entity
+        cache-settings:
+          authors:
+            name: authors
+          posts:
+            name: posts
+          feed:
+            name: feed
+        settings:
+          max-feed-size: 500
+          batch-size: 20
+          max-post-comments-size: 3
+      lock-registry:
+        lockSettings:
+          default:
+            name: default
+            post-lock-key: POST_LOCK_KEY
+            release-time-duration-millis: 10000
+          feed:
+            name: feed
+            post-lock-key: FEED_LOCK_KEY
+            release-time-duration-millis: 10000
+
+    kafka:
+      port: 9092
+      host: localhost
+      group-id: account_service
+      bootstrap-servers: localhost:9092
+      topics:
+        split-batch-size: 500
+        default-partition: 1
+        default-replication: 1
+        topic-settings:
+          post-likes:
+            name: post-likes
+          posts:
+            name: posts
+          post-views:
+            name: post-views
+          comments:
+            name: comments
+          split:
+            name: split
+          feed-heater:
+            name: feed-heater
+
+  profiles:
+    active: test
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: info
+
+async:
+  corePoolSize: 1
+  maxPoolSize: 1
+  queueCapacity: 100
+  settings:
+    kafka:
+      corePoolSize: 1
+      maxPoolSize: 1
+      queueCapacity: 100
+    redis:
+      settings:
+        posts:
+          corePoolSize: 1
+          maxPoolSize: 1
+          queueCapacity: 100
+        feed:
+          corePoolSize: 1
+          maxPoolSize: 1
+          queueCapacity: 100
+        comments:
+          corePoolSize: 1
+          maxPoolSize: 1
+          queueCapacity: 100
+        authors:
+          corePoolSize: 1
+          maxPoolSize: 1
+          queueCapacity: 100
+
+
+
+batches:
+  feed-heater:
+    size: 100
+
+springdoc:
+  parameter-object:
+    convert-to-spring-annotation: false
+
+
+
