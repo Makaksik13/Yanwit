@@ -15,5 +15,7 @@ public interface PostCacheService {
 
     List<PostCache> getPostCacheByIds(List<Long> postIds);
 
-    void addCommentToCachedPost(Long postId, CommentDto commentDto);
+    void addCommentToCachedPost(CommentDto commentDto);
+
+    void deleteCommentFromCachedPost(CommentDto commentDto);
 }

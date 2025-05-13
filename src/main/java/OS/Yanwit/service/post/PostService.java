@@ -15,4 +15,7 @@ public interface PostService {
 
     @Transactional
     void deleteById(Long id);
+
+    @Transactional
+    PostDto update(Long id, String content);
 }

@@ -17,4 +17,7 @@ public interface UserService {
 
     @Transactional(readOnly = true)
     List<UserDto> getAllUsers();
+
+    @Transactional
+    void deleteUserById(long userId);
 }

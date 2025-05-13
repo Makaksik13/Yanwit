@@ -65,15 +65,27 @@ public class PostCacheServiceImpl implements PostCacheService {
 
     @Override
     @Async("postsCacheTaskExecutor")
-    public void addCommentToCachedPost(Long postId, CommentDto commentDto) {
-
-        redisOperations.customUpdate(postCacheRepository, postId, ()->{
-            postCacheRepository.findById(postId).ifPresent(postCache -> {
+    public void addCommentToCachedPost(CommentDto commentDto) {
+        redisOperations.customUpdate(postCacheRepository, commentDto.getPostId(), ()->{
+            postCacheRepository.findById(commentDto.getPostId()).ifPresent(postCache -> {
                 var comments = postCache.getComments();
                 comments.add(commentDto);
                 if(comments.size() > maxCommentsQuantity){
-                    postCache.getComments().pollFirst();
+                    postCache.getComments().pollLast();
                 }
+                postCacheRepository.save(postCache);
+            });
+        });
+    }
+
+    @Override
+    @Async("postsCacheTaskExecutor")
+    public void deleteCommentFromCachedPost(CommentDto commentDto) {
+        redisOperations.customUpdate(postCacheRepository, commentDto.getPostId(), ()->{
+            postCacheRepository.findById(commentDto.getPostId()).ifPresent(postCache -> {
+                var comments = postCache.getComments();
+                comments.remove(commentDto);
+                postCacheRepository.save(postCache);
             });
         });
     }

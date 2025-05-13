@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,12 @@ public class PostController {
     @Operation(summary = "Получение поста по его идентификатору")
     public PostDto findById(@PathVariable @Parameter Long postId) {
         return postService.findById(postId);
+    }
+
+    @PutMapping("{postId}")
+    @Operation(summary = "Обновление поста по его идентификатору")
+    public PostDto update(@PathVariable @Parameter Long postId, @RequestBody String content){
+        return postService.update(postId, content);
     }
 
     @PostMapping

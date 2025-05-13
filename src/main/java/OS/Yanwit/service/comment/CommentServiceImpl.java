@@ -3,6 +3,7 @@ package OS.Yanwit.service.comment;
 import OS.Yanwit.kafka.event.comment.CommentEvent;
 import OS.Yanwit.kafka.producer.comment.CommentProducer;
 import OS.Yanwit.mapper.CommentMapper;
+import OS.Yanwit.model.OperationType;
 import OS.Yanwit.model.dto.CommentDto;
 import OS.Yanwit.model.dto.CommentToCreateDto;
 import OS.Yanwit.model.entity.Comment;
@@ -31,8 +32,9 @@ public class CommentServiceImpl implements CommentService {
     private final AuthorCacheService authorCacheService;
     private final CommentProducer commentProducer;
 
-    private void generateAndSendCommentEventToKafka(Comment comment){
+    private void generateAndSendCommentEventToKafka(Comment comment, OperationType operationType){
         CommentEvent event = commentMapper.toEvent(comment);
+        event.setOperationType(operationType);
         commentProducer.produce(event);
     }
 
@@ -42,14 +44,14 @@ public class CommentServiceImpl implements CommentService {
         Post post = commonServiceMethods.findEntityById(postRepository, postId, "Post");
         Comment comment = commentMapper.toEntity(commentDto);
         comment.setAuthorId(userId);
-        comment.setPost(post);
+        comment.setPostId(post.getId());
 
-        commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
         authorCacheService.save(userId);
 
-        generateAndSendCommentEventToKafka(comment);
-        log.info("Created comment on post {} authored by {}", postId, userId);
-        return commentMapper.toDto(comment);
+        generateAndSendCommentEventToKafka(savedComment, OperationType.ADD);
+        log.info("Created comment on post {} authored by {} with id {}", postId, userId, savedComment.getId());
+        return commentMapper.toDto(savedComment);
     }
 
     @Override
@@ -59,7 +61,8 @@ public class CommentServiceImpl implements CommentService {
         CommentDto commentToDelete = commentMapper.toDto(comment);
 
         commentRepository.deleteById(commentId);
-        log.info("Deleted comment {} on post {}", commentId, comment.getPost().getId());
+        generateAndSendCommentEventToKafka(comment, OperationType.DELETE);
+        log.info("Deleted comment {} on post {}", commentId, comment.getPostId());
         return commentToDelete;
     }
 

@@ -40,7 +40,7 @@ public class Post {
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Like> likes;
 
-    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    @OneToMany(mappedBy = "postId", orphanRemoval = true)
     private List<Comment> comments;
 
     @Column(name = "published", nullable = false)
@@ -55,7 +55,7 @@ public class Post {
     private LocalDateTime scheduledAt;
 
     @Column(name = "deleted", nullable = false)
-    private boolean deleted;
+    private boolean deleted; //todo delete this field
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

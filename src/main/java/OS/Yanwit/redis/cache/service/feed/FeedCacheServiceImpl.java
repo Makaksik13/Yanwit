@@ -84,7 +84,16 @@ public class FeedCacheServiceImpl implements FeedCacheService {
         }, feedCacheKey);
     }
 
+    @Override
+    @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 5, backoff = @Backoff(delay = 500, multiplier = 3))
+    public void deletePostFromUserFeed(Long postId, Long subscriberId){
+        String feedCacheKey = generateFeedCacheKey(subscriberId);
+        long score = postId * (-1);
 
+        lock(() -> {
+            redisFeedZSetOps.remove(feedCacheKey, score);
+        }, feedCacheKey);
+    }
 
     private String generateFeedCacheKey(Long followerId) {
         return feedCacheKeyPrefix + followerId;

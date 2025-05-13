@@ -8,5 +8,5 @@ public interface LikeService {
     LikeDto addLikeOnPost(long userId, long postId);
 
     @Transactional
-    void removeLikeFromPost(long likeId, long userId, long postId);
+    void removeLikeFromPost(long likeId);
 }

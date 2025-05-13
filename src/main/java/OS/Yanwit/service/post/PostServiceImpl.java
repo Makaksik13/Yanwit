@@ -1,5 +1,6 @@
 package OS.Yanwit.service.post;
 
+import OS.Yanwit.exception.NotFoundException;
 import OS.Yanwit.kafka.event.post.PostEvent;
 import OS.Yanwit.kafka.producer.split.MessageSplitPostProducer;
 import OS.Yanwit.mapper.PostMapper;
@@ -46,8 +47,22 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDto findById(Long id) {
         Post post = commonServiceMethods.findEntityById(postRepository, id, "Post");
-
+        if(post.isDeleted()) {
+            throw new NotFoundException(String.format("Post with id %d not found", id));
+        }
         return postMapper.toDto(post);
+    }
+
+    @Override
+    @Transactional
+    public PostDto update(Long id, String content){
+        Post post = commonServiceMethods.findEntityById(postRepository, id, "Post");
+        post.setContent(content);
+        Post updatedPost = postRepository.save(post);
+
+        postCacheService.save(postMapper.toPostCache(post));
+
+        return postMapper.toDto(updatedPost);
     }
 
     @Override
@@ -68,7 +83,7 @@ public class PostServiceImpl implements PostService{
         authorCacheService.save(post.getAuthorId());
         postCacheService.save(postMapper.toPostCache(post));
 
-        generateAndSendPostEventToKafka(post, OperationType.AddPost);
+        generateAndSendPostEventToKafka(post, OperationType.ADD);
 
         return postMapper.toDto(post);
     }
@@ -77,7 +92,9 @@ public class PostServiceImpl implements PostService{
     @Transactional
     public void deleteById(Long id) {
         Post post = commonServiceMethods.findEntityById(postRepository, id, "Post");
-        post.setDeleted(true);
-        postRepository.save(post);
+
+        postCacheService.deleteById(post.getId());
+        postRepository.deleteById(id);
+        generateAndSendPostEventToKafka(post, OperationType.DELETE);
     }
 }

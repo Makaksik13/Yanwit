@@ -2,6 +2,7 @@ package OS.Yanwit.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -58,9 +59,10 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "subscription",
             joinColumns = @JoinColumn(name = "followee_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
+    //todo возможна проблема n+1, освежить в памяти ее решение. Возможно, EAGER не решит проблему, нужен JOIN FETCH
     private List<User> followers;
 
     @ManyToMany(mappedBy = "followers")

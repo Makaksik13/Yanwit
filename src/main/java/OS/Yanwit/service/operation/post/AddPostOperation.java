@@ -1,4 +1,4 @@
-package OS.Yanwit.service.operation;
+package OS.Yanwit.service.operation.post;
 
 import OS.Yanwit.kafka.event.post.PostEvent;
 import OS.Yanwit.model.OperationType;
@@ -18,6 +18,6 @@ public class AddPostOperation implements PostOperation {
 
     @Override
     public OperationType getOperationType() {
-        return OperationType.AddPost;
+        return OperationType.ADD;
     }
 }

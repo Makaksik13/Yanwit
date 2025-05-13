@@ -4,6 +4,8 @@ import OS.Yanwit.kafka.consumer.KafkaConsumer;
 import OS.Yanwit.kafka.event.comment.CommentEvent;
 import OS.Yanwit.mapper.CommentMapper;
 import OS.Yanwit.redis.cache.service.post.PostCacheService;
+import OS.Yanwit.service.operation.comment.CommentOperation;
+import OS.Yanwit.service.registry.CommentOperationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,6 +20,7 @@ public class CommentConsumer implements KafkaConsumer<CommentEvent> {
 
     private final CommentMapper commentMapper;
     private final PostCacheService postCacheService;
+    private final CommentOperationRegistry commentOperationRegistry;
 
     @Override
     @KafkaListener(topics = "${spring.data.kafka.topics.topic-settings.comments.name}", groupId = "${spring.data.kafka.group-id}")
@@ -25,7 +28,13 @@ public class CommentConsumer implements KafkaConsumer<CommentEvent> {
 
         log.info("Received new comment event {}", event);
 
-        postCacheService.addCommentToCachedPost(event.getPostId(), commentMapper.toDto(event));
+        CommentOperation op = commentOperationRegistry.getOperation(event.getOperationType());
+        if (op != null) {
+            op.execute(postCacheService, event);
+        } else {
+            ack.acknowledge();
+            throw new UnsupportedOperationException("Unknown operation");
+        }
 
         ack.acknowledge();
     }

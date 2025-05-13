@@ -2,6 +2,7 @@ package OS.Yanwit;
 
 import OS.Yanwit.config.redis.RedisCacheConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -41,6 +42,7 @@ public class YanwitApplication {
 	public ObjectMapper objectMapper() {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
 		return objectMapper;
 	}
 }

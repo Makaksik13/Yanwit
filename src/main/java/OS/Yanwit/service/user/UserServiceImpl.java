@@ -55,4 +55,11 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
         return userMapper.toListDto(users);
     }
+
+    @Override
+    @Transactional
+    public void deleteUserById(long userId) {
+        userRepository.deleteById(userId);
+    }
+    //todo добавь логирование для каждого метода
 }

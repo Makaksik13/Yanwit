@@ -1,7 +1,12 @@
 package OS.Yanwit.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum OperationType {
-    AddPost, UpdatePost, DeletePost,
-    AddLike, UpdateLike, DeleteLike,
-    AddComment, UpdateComment, DeleteComment
+    ADD, DELETE, UPDATE;
+
+    @JsonCreator
+    public static OperationType fromString(String value) {
+        return OperationType.valueOf(value.toUpperCase());
+    }
 }

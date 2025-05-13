@@ -1,10 +1,9 @@
-package OS.Yanwit.service.operation;
+package OS.Yanwit.service.operation.post;
 
 import OS.Yanwit.kafka.event.post.PostEvent;
-import OS.Yanwit.model.OperationType;
 import OS.Yanwit.redis.cache.service.feed.FeedCacheService;
+import OS.Yanwit.service.operation.Operation;
 
-public interface PostOperation {
+public interface PostOperation extends Operation {
     void execute(FeedCacheService feedCashService, PostEvent event);
-    OperationType getOperationType();
 }

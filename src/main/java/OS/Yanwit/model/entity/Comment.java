@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -35,11 +34,10 @@ public class Comment {
     private String content;
 
     @Column(name = "author_id", nullable = false)
-    private long authorId;
+    private Long authorId;
 
-    @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    private Long postId;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

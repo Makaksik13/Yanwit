@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisHash;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.NavigableSet;
+import java.util.TreeSet;
 
 @Getter
 @Setter
@@ -25,9 +26,10 @@ public class PostCache implements Serializable {
 
     @Id
     private long id;
-    private NavigableSet<CommentDto> comments;
+    private NavigableSet<CommentDto> comments = new TreeSet<>();
     private long authorId;
     private String content;
+    private boolean published;
     private LocalDateTime publishedAt;
     private LocalDateTime createdAt;
     private long likesCount;

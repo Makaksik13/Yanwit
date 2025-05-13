@@ -9,4 +9,6 @@ public interface FeedCacheService {
     void addPostIdToFollowerFeed(Long postId, Long subscriberId);
 
     List<PostDto> getFeedByUserId(Long userId, Long postId);
+
+    void deletePostFromUserFeed(Long postId, Long subscriberId);
 }

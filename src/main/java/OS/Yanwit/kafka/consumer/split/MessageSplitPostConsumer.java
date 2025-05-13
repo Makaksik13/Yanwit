@@ -32,6 +32,7 @@ public class MessageSplitPostConsumer implements KafkaConsumer<PostEvent> {
                     event.getContent(),
                     sublist,
                     event.getPublishedAt());
+            postEvent.setOperationType(event.getOperationType());
             postProducer.produce(postEvent);
         });
     }

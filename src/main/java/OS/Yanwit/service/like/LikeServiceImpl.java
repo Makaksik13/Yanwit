@@ -56,16 +56,9 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public void removeLikeFromPost(long likeId, long userId, long postId) {
-        LikeDto likeDto = createLikeDto(likeId, userId, dto -> dto.setPostId(postId));
-
-        Like like = likeMapper.toEntity(likeDto);
-        Post post = commonServiceMethods.findEntityById(postRepository, postId, "Post");
-        post.getLikes().remove(like);
-
-        log.info("Like with likeId = {} was removed from post with postId = {} by user with userId = {}", like.getId(), postId, userId);
-
-        likeRepository.delete(like);
+    public void removeLikeFromPost(long likeId) {
+        likeRepository.deleteById(likeId);
+        log.info("Like with likeId = {} was removed", likeId);
     }
 
     private LikeDto createLikeDto(Long id, Long userId, Consumer<LikeDto> function) {
