@@ -4,6 +4,8 @@ import OS.Yanwit.model.dto.PostCreateDto;
 import OS.Yanwit.model.dto.PostDto;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface PostService {
     PostDto findById(Long id);
 
@@ -18,4 +20,6 @@ public interface PostService {
 
     @Transactional
     PostDto update(Long id, String content);
+
+    List<PostDto> findLatestByAuthor(Long authorId, long limit);
 }

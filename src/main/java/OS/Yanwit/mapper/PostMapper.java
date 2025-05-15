@@ -23,6 +23,14 @@ public interface PostMapper {
     @Mapping(source = "likes", target = "likesCount", qualifiedByName = "getCountFromLikeList")
     PostCache toPostCache(Post post);
 
+    PostCache toPostCache(PostDto post);
+
+    List<PostDto> toListDto(List<Post> posts);
+
+    List<PostCache> toListPostCacheFromDto(List<PostDto> posts);
+
+    List<PostCache> toListPostCache(List<Post> posts);
+
     @Named("getCountFromLikeList")
     default int getCountFromLikeList(List<Like> likes) {
         return likes != null ? likes.size() : 0;

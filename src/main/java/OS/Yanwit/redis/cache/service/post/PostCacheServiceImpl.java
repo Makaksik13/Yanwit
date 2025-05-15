@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -26,11 +27,15 @@ public class PostCacheServiceImpl implements PostCacheService {
     @Override
     @Async("postsCacheTaskExecutor")
     public void save(PostCache entity) {
-
         entity = redisOperations.updateOrSave(postCacheRepository, entity, entity.getId());
 
         log.info("Saved post with id {} to cache: {}", entity.getId(), entity);
+    }
 
+    @Override
+    @Async("postsCacheTaskExecutor")
+    public void saveAll(Collection<PostCache> entities) {
+        redisOperations.saveAll(postCacheRepository, entities);
     }
 
     @Override

@@ -27,10 +27,13 @@ spring:
         cache-settings:
           authors:
             name: authors
+            ttl: 5000
           posts:
             name: posts
+            ttl: 9000
           feed:
             name: feed
+            ttl: 3000
         settings:
           max-feed-size: 500
           batch-size: 20
@@ -68,6 +71,8 @@ spring:
             name: split
           feed-heater:
             name: feed-heater
+          subscription:
+            name: subscription
 
   profiles:
     active: test
@@ -117,6 +122,8 @@ async:
 batches:
   feed-heater:
     size: 100
+  HotPostsWhenSubscription:
+    size: 20
 
 springdoc:
   parameter-object:

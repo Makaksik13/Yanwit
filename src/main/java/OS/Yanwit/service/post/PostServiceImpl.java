@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +64,12 @@ public class PostServiceImpl implements PostService{
         postCacheService.save(postMapper.toPostCache(post));
 
         return postMapper.toDto(updatedPost);
+    }
+
+    @Override
+    public List<PostDto> findLatestByAuthor(Long authorId, long limit) {
+        List<Post> posts = postRepository.findLatestByAuthor(authorId, limit);
+        return postMapper.toListDto(posts);
     }
 
     @Override
