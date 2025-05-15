@@ -84,9 +84,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
 
         lock(() ->{
             redisFeedZSetOps.add(feedCacheKey, postId, score);
-            long ttl = redisCacheProperty.getCacheSettings().containsKey(cacheKeyToFeedTtl) ?
-                    redisCacheProperty.getCacheSettings().get(cacheKeyToFeedTtl).getTtl() :
-                    redisCacheProperty.getDefaultTtl();
+            long ttl = resolveTtl();
             redisTemplate.expire(feedCacheKey, ttl, TimeUnit.SECONDS);
 
             Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
@@ -101,31 +99,52 @@ public class FeedCacheServiceImpl implements FeedCacheService {
     public void addPostIdToFollowerFeedByBatch(Collection<Long> postIds, Long subscriberId){
         String feedCacheKey = generateFeedCacheKey(subscriberId);
 
-        postIds.forEach(postId -> {
-            lock(() ->{
-                long score = postId * (-1);
-                redisFeedZSetOps.add(feedCacheKey, postId, score);
-                long ttl = redisCacheProperty.getCacheSettings().containsKey(cacheKeyToFeedTtl) ?
-                        redisCacheProperty.getCacheSettings().get(cacheKeyToFeedTtl).getTtl() :
-                        redisCacheProperty.getDefaultTtl();
-                redisTemplate.expire(feedCacheKey, ttl, TimeUnit.SECONDS);
+        lock(() -> {
+                postIds.forEach(postId -> {
 
-                Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
-                if (setSize != null && setSize > maxFeedSize) {
-                    redisFeedZSetOps.removeRange(feedCacheKey, 0, setSize - maxFeedSize);
-                }
-            }, feedCacheKey);
-        });
+                    long score = postId * (-1);
+                    redisFeedZSetOps.add(feedCacheKey, postId, score);
+                    long ttl = resolveTtl();
+                    redisTemplate.expire(feedCacheKey, ttl, TimeUnit.SECONDS);
+
+                    Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
+                    if (setSize != null && setSize > maxFeedSize) {
+                        redisFeedZSetOps.removeRange(feedCacheKey, 0, setSize - maxFeedSize);
+                    }
+                });
+        }, feedCacheKey);
     }
 
     @Override
     @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 5, backoff = @Backoff(delay = 500, multiplier = 3))
     public void deletePostFromUserFeed(Long postId, Long subscriberId){
         String feedCacheKey = generateFeedCacheKey(subscriberId);
-        long score = postId * (-1);
 
         lock(() -> {
-            redisFeedZSetOps.remove(feedCacheKey, score);
+            redisFeedZSetOps.remove(feedCacheKey, postId);
+        }, feedCacheKey);
+    }
+
+    @Override
+    @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 5, backoff = @Backoff(delay = 500, multiplier = 3))
+    public void deletePostsFromUserFeedByAuthor(Long userId, Long authorId){
+        String feedCacheKey = generateFeedCacheKey(userId);
+        long startPostId = getOldestPostIdInFeed(feedCacheKey);
+
+        List<Post> postsToRemove = postRepository.findByAuthorFromPostIdWithLimit(authorId, startPostId, maxFeedSize);
+        List<Long> postIds = postsToRemove.stream().map(Post::getId).toList();
+        deletePostsFromUserFeedByBatch(postIds, userId);
+    }
+
+    @Override
+    @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 5, backoff = @Backoff(delay = 500, multiplier = 3))
+    public void deletePostsFromUserFeedByBatch(Collection<Long> postIds, Long userId){
+        String feedCacheKey = generateFeedCacheKey(userId);
+
+        lock(() -> {
+            postIds.forEach(postId -> {
+                redisFeedZSetOps.remove(feedCacheKey, postId);
+            });
         }, feedCacheKey);
     }
 
@@ -133,6 +152,14 @@ public class FeedCacheServiceImpl implements FeedCacheService {
     @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 5, backoff = @Backoff(delay = 500, multiplier = 3))
     public void AddPostsFromAuthorToUserFeed(Long userId, Long authorId) {
         String feedCacheKey = generateFeedCacheKey(userId);
+        long startPostId = getOldestPostIdInFeed(feedCacheKey);
+
+        List<Post> postsToAdd = postRepository.findByAuthorFromPostIdWithLimit(authorId, startPostId, maxFeedSize);
+        postCacheService.saveAll(postMapper.toListPostCache(postsToAdd));
+        addPostIdToFollowerFeedByBatch(postsToAdd.stream().map(Post::getId).toList(), userId);
+    }
+
+    private long getOldestPostIdInFeed(String feedCacheKey) {
         Long size = redisFeedZSetOps.size(feedCacheKey);
         long startPostId = 0;
         if (size != null && size != 0) {
@@ -146,10 +173,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
                         return (Long) obj;
                     }).iterator().next() : 0;
         }
-
-        List<Post> postsToAdded = postRepository.findByAuthorFromPostIdWithLimit(authorId, startPostId, maxFeedSize);
-        postCacheService.saveAll(postMapper.toListPostCache(postsToAdded));
-        addPostIdToFollowerFeedByBatch(postsToAdded.stream().map(Post::getId).toList(), userId);
+        return startPostId;
     }
 
     private String generateFeedCacheKey(Long followerId) {
@@ -202,5 +226,11 @@ public class FeedCacheServiceImpl implements FeedCacheService {
         } else {
             throw new OptimisticLockException("Failed to obtain lock for key: " + lockKey);
         }
+    }
+
+    private long resolveTtl() {
+        return redisCacheProperty.getCacheSettings().containsKey(cacheKeyToFeedTtl) ?
+                redisCacheProperty.getCacheSettings().get(cacheKeyToFeedTtl).getTtl() :
+                redisCacheProperty.getDefaultTtl();
     }
 }

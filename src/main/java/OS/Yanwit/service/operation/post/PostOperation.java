@@ -5,5 +5,5 @@ import OS.Yanwit.redis.cache.service.feed.FeedCacheService;
 import OS.Yanwit.service.operation.Operation;
 
 public interface PostOperation extends Operation {
-    void execute(FeedCacheService feedCashService, PostEvent event);
+    void execute(FeedCacheService service, PostEvent event);
 }

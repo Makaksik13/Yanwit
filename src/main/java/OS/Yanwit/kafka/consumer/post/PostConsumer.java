@@ -3,6 +3,7 @@ package OS.Yanwit.kafka.consumer.post;
 import OS.Yanwit.kafka.consumer.KafkaConsumer;
 import OS.Yanwit.kafka.event.post.PostEvent;
 import OS.Yanwit.redis.cache.service.feed.FeedCacheService;
+
 import OS.Yanwit.service.operation.post.PostOperation;
 import OS.Yanwit.service.registry.PostOperationRegistry;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,6 @@ public class PostConsumer implements KafkaConsumer<PostEvent> {
         if (op != null) {
             op.execute(feedCacheService, event);
         } else {
-            ack.acknowledge();
             throw new UnsupportedOperationException("Unknown operation");
         }
 

@@ -2,7 +2,6 @@ package OS.Yanwit.kafka.consumer.comment;
 
 import OS.Yanwit.kafka.consumer.KafkaConsumer;
 import OS.Yanwit.kafka.event.comment.CommentEvent;
-import OS.Yanwit.mapper.CommentMapper;
 import OS.Yanwit.redis.cache.service.post.PostCacheService;
 import OS.Yanwit.service.operation.comment.CommentOperation;
 import OS.Yanwit.service.registry.CommentOperationRegistry;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CommentConsumer implements KafkaConsumer<CommentEvent> {
 
-    private final CommentMapper commentMapper;
     private final PostCacheService postCacheService;
     private final CommentOperationRegistry commentOperationRegistry;
 

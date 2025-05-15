@@ -35,7 +35,7 @@ public class PostCacheServiceImpl implements PostCacheService {
     @Override
     @Async("postsCacheTaskExecutor")
     public void saveAll(Collection<PostCache> entities) {
-        redisOperations.saveAll(postCacheRepository, entities);
+        postCacheRepository.saveAll(entities);
     }
 
     @Override

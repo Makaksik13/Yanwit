@@ -15,5 +15,9 @@ public interface FeedCacheService {
 
     void deletePostFromUserFeed(Long postId, Long subscriberId);
 
+    void deletePostsFromUserFeedByAuthor(Long userId, Long authorId);
+
+    void deletePostsFromUserFeedByBatch(Collection<Long> postIds, Long subscriberId);
+
     void AddPostsFromAuthorToUserFeed(Long userId, Long authorId);
 }

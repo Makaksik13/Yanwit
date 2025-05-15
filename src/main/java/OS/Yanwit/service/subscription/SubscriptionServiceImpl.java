@@ -3,6 +3,7 @@ package OS.Yanwit.service.subscription;
 import OS.Yanwit.kafka.producer.subscription.SubscriptionProducer;
 import OS.Yanwit.mapper.PostMapper;
 import OS.Yanwit.mapper.SubscriptionMapper;
+import OS.Yanwit.model.OperationType;
 import OS.Yanwit.model.dto.PostDto;
 import OS.Yanwit.model.dto.SubscriptionRequestDto;
 import OS.Yanwit.redis.cache.service.feed.FeedCacheService;
@@ -38,7 +39,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         List<PostDto> postDtoList = postService.findLatestByAuthor(subscriptionRequestDto.getFolloweeId(),
                 batchSizeForHotPostsWhenSubscription);
 
-        subscriptionProducer.produce(subscriptionMapper.toEvent(subscriptionRequestDto));
+        subscriptionProducer.produce(subscriptionMapper.toEvent(subscriptionRequestDto, OperationType.ADD));
 
         postCacheService.saveAll(postMapper.toListPostCacheFromDto(postDtoList));
         feedCacheService.addPostIdToFollowerFeedByBatch(postDtoList.stream().map(PostDto::getId).toList(),
@@ -49,5 +50,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional
     public void unfollowUser(SubscriptionRequestDto subscriptionRequestDto) {
         subscriptionRepository.unfollowUser(subscriptionRequestDto.getFollowerId(), subscriptionRequestDto.getFolloweeId());
+        subscriptionProducer.produce(subscriptionMapper.toEvent(subscriptionRequestDto, OperationType.DELETE));
     }
 }
