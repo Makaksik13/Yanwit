@@ -10,7 +10,7 @@ public interface PostCacheService {
 
     void save(PostCache entity);
 
-    void incrementLikes(long postId);
+    void addNumberToLikesCountByPostId(long postId, long number);
 
     void deleteById(long postId);
 

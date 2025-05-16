@@ -3,13 +3,17 @@ package OS.Yanwit.service.operation.post;
 import OS.Yanwit.kafka.event.post.PostEvent;
 import OS.Yanwit.model.OperationType;
 import OS.Yanwit.redis.cache.service.feed.FeedCacheService;
+import OS.Yanwit.service.operation.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AddPostOperation implements PostOperation {
+@RequiredArgsConstructor
+public class AddPostOperation implements Operation<PostEvent> {
+    private final FeedCacheService feedCashService;
 
     @Override
-    public void execute(FeedCacheService feedCashService, PostEvent event) {
+    public void execute(PostEvent event) {
         event.getFollowersIds()
                 .forEach(followerId ->{
                     feedCashService.addPostIdToFollowerFeed(event.getPostId(), followerId);
@@ -18,6 +22,6 @@ public class AddPostOperation implements PostOperation {
 
     @Override
     public OperationType getOperationType() {
-        return OperationType.ADD;
+        return OperationType.ADD_POST;
     }
 }

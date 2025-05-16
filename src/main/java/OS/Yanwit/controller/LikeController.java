@@ -25,9 +25,9 @@ public class LikeController {
         return likeService.addLikeOnPost(userId, postId);
     }
 
-    @Operation(summary = "Удаление лайка с идентификатором likeId")
-    @DeleteMapping("/like/{likeId}")
-    public void deleteLikeFromPost(@PathVariable long likeId) {
-        likeService.removeLikeFromPost(likeId);
+    @Operation(summary = "Удаление лайка, автор которого имеет userId, на посте с идентификатором postId")
+    @DeleteMapping("/post/{postId}/user/{userId}/")
+    public void deleteLikeFromPost(@PathVariable long postId, @PathVariable long userId) {
+        likeService.removeLikeFromPostByUserIdAndPostId(userId, postId);
     }
 }

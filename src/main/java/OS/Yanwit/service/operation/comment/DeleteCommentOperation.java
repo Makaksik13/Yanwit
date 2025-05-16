@@ -1,30 +1,27 @@
 package OS.Yanwit.service.operation.comment;
 
 import OS.Yanwit.kafka.event.comment.CommentEvent;
+import OS.Yanwit.mapper.CommentMapper;
 import OS.Yanwit.model.OperationType;
-import OS.Yanwit.model.dto.CommentDto;
 import OS.Yanwit.redis.cache.service.post.PostCacheService;
+import OS.Yanwit.service.operation.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DeleteCommentOperation implements CommentOperation{
+@RequiredArgsConstructor
+public class DeleteCommentOperation implements Operation<CommentEvent> {
+
+    private final CommentMapper commentMapper;
+    private final PostCacheService postCacheService;
 
     @Override
-    public void execute(PostCacheService postCacheService, CommentEvent event) {
-        postCacheService.deleteCommentFromCachedPost(CommentDto.builder()
-                .id(event.getId())
-                .authorId(event.getUserId())
-                .content(event.getContent())
-                .postId(event.getPostId())
-                .createdAt(event.getCreatedAt())
-                .updatedAt(event.getUpdatedAt())
-                .build()
-        );
-        //todo упростить создание дто, м.б. через маппер
+    public void execute(CommentEvent event) {
+        postCacheService.deleteCommentFromCachedPost(commentMapper.toDto(event));
     }
 
     @Override
     public OperationType getOperationType() {
-        return OperationType.DELETE;
+        return OperationType.DELETE_COMMENT;
     }
 }

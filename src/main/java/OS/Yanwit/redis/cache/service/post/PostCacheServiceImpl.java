@@ -58,11 +58,11 @@ public class PostCacheServiceImpl implements PostCacheService {
 
     @Override
     @Async("postsCacheTaskExecutor")
-    public void incrementLikes(long postId) {
+    public void addNumberToLikesCountByPostId(long postId, long number) {
 
         redisOperations.customUpdate(postCacheRepository, postId,  () -> {
             postCacheRepository.findById(postId).ifPresent(post ->{
-                post.setLikesCount(post.getLikesCount() + 1);
+                post.setLikesCount(Math.max(post.getLikesCount() + number, 0));
                 postCacheRepository.save(post);
             });
         });

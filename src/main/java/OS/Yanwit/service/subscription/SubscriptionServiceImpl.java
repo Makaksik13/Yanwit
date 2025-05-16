@@ -39,7 +39,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         List<PostDto> postDtoList = postService.findLatestByAuthor(subscriptionRequestDto.getFolloweeId(),
                 batchSizeForHotPostsWhenSubscription);
 
-        subscriptionProducer.produce(subscriptionMapper.toEvent(subscriptionRequestDto, OperationType.ADD));
+        subscriptionProducer.produce(subscriptionMapper.toEvent(subscriptionRequestDto, OperationType.ADD_SUBSCRIPTION));
 
         postCacheService.saveAll(postMapper.toListPostCacheFromDto(postDtoList));
         feedCacheService.addPostIdToFollowerFeedByBatch(postDtoList.stream().map(PostDto::getId).toList(),
@@ -50,6 +50,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional
     public void unfollowUser(SubscriptionRequestDto subscriptionRequestDto) {
         subscriptionRepository.unfollowUser(subscriptionRequestDto.getFollowerId(), subscriptionRequestDto.getFolloweeId());
-        subscriptionProducer.produce(subscriptionMapper.toEvent(subscriptionRequestDto, OperationType.DELETE));
+        subscriptionProducer.produce(subscriptionMapper.toEvent(subscriptionRequestDto, OperationType.DELETE_SUBSCRIPTION));
     }
 }

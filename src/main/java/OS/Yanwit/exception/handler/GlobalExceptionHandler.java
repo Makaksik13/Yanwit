@@ -1,6 +1,7 @@
 package OS.Yanwit.exception.handler;
 
 import OS.Yanwit.exception.NotFoundException;
+import OS.Yanwit.exception.RepeatLikeCreationException;
 import OS.Yanwit.exception.responce.ErrorResponse;
 import OS.Yanwit.exception.responce.ValidationErrorResponse;
 import OS.Yanwit.exception.responce.Violation;
@@ -45,6 +46,13 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList());
         log.error("Validation exception", e);
         return new ValidationErrorResponse(violations);
+    }
+
+    @ExceptionHandler(RepeatLikeCreationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleRepeatLikeCreationException(RepeatLikeCreationException e, HttpServletRequest request) {
+        log.error("Not found exception", e);
+        return buildErrorResponse(e, request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(NotFoundException.class)

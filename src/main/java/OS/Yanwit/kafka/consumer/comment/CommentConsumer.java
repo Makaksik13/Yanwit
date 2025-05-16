@@ -1,11 +1,9 @@
 package OS.Yanwit.kafka.consumer.comment;
 
-import OS.Yanwit.kafka.consumer.KafkaConsumer;
+import OS.Yanwit.kafka.consumer.KafkaMultiFunctionalConsumer;
 import OS.Yanwit.kafka.event.comment.CommentEvent;
-import OS.Yanwit.redis.cache.service.post.PostCacheService;
-import OS.Yanwit.service.operation.comment.CommentOperation;
-import OS.Yanwit.service.registry.CommentOperationRegistry;
-import lombok.RequiredArgsConstructor;
+import OS.Yanwit.service.operation.Operation;
+import OS.Yanwit.service.registry.OperationRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -14,26 +12,15 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class CommentConsumer implements KafkaConsumer<CommentEvent> {
+public class CommentConsumer extends KafkaMultiFunctionalConsumer<CommentEvent> {
 
-    private final PostCacheService postCacheService;
-    private final CommentOperationRegistry commentOperationRegistry;
+    public CommentConsumer(OperationRegistry<Operation<CommentEvent>> operationRegistry) {
+        super(operationRegistry);
+    }
 
     @Override
     @KafkaListener(topics = "${spring.data.kafka.topics.topic-settings.comments.name}", groupId = "${spring.data.kafka.group-id}")
     public void consume(@Payload CommentEvent event, Acknowledgment ack) {
-
-        log.info("Received new comment event {}", event);
-
-        CommentOperation op = commentOperationRegistry.getOperation(event.getOperationType());
-        if (op != null) {
-            op.execute(postCacheService, event);
-        } else {
-            ack.acknowledge();
-            throw new UnsupportedOperationException("Unknown operation");
-        }
-
-        ack.acknowledge();
+        super.consume(event, ack);
     }
 }

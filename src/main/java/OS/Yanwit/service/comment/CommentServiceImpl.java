@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
         Comment savedComment = commentRepository.save(comment);
         authorCacheService.save(userId);
 
-        generateAndSendCommentEventToKafka(savedComment, OperationType.ADD);
+        generateAndSendCommentEventToKafka(savedComment, OperationType.ADD_COMMENT);
         log.info("Created comment on post {} authored by {} with id {}", postId, userId, savedComment.getId());
         return commentMapper.toDto(savedComment);
     }
@@ -61,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
         CommentDto commentToDelete = commentMapper.toDto(comment);
 
         commentRepository.deleteById(commentId);
-        generateAndSendCommentEventToKafka(comment, OperationType.DELETE);
+        generateAndSendCommentEventToKafka(comment, OperationType.DELETE_COMMENT);
         log.info("Deleted comment {} on post {}", commentId, comment.getPostId());
         return commentToDelete;
     }

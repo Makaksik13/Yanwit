@@ -90,7 +90,7 @@ public class PostServiceImpl implements PostService{
         authorCacheService.save(post.getAuthorId());
         postCacheService.save(postMapper.toPostCache(post));
 
-        generateAndSendPostEventToKafka(post, OperationType.ADD);
+        generateAndSendPostEventToKafka(post, OperationType.ADD_POST);
 
         return postMapper.toDto(post);
     }
@@ -102,6 +102,6 @@ public class PostServiceImpl implements PostService{
 
         postCacheService.deleteById(post.getId());
         postRepository.deleteById(id);
-        generateAndSendPostEventToKafka(post, OperationType.DELETE);
+        generateAndSendPostEventToKafka(post, OperationType.DELETE_POST);
     }
 }

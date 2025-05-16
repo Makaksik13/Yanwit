@@ -3,6 +3,7 @@ package OS.Yanwit.kafka.consumer.split;
 import OS.Yanwit.kafka.consumer.KafkaConsumer;
 import OS.Yanwit.kafka.event.post.PostEvent;
 import OS.Yanwit.kafka.producer.post.PostProducer;
+import OS.Yanwit.mapper.PostMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ public class MessageSplitPostConsumer implements KafkaConsumer<PostEvent> {
     private int splitBatchSize;
 
     private final PostProducer postProducer;
+    private final PostMapper postMapper;
 
     @Override
     @KafkaListener(topics = "${spring.data.kafka.topics.topic-settings.split.name}", groupId = "${spring.data.kafka.group-id}")
