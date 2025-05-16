@@ -42,7 +42,7 @@ public class PostController {
         return postService.create(postCreateDto);
     }
 
-    @PostMapping("publication/{postId}")
+    @PutMapping("publication/{postId}")
     @Operation(summary = "Публикация поста по его идентификатору")
     public PostDto publish(@PathVariable @Parameter Long postId) {
         return postService.publish(postId);

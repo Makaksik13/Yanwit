@@ -23,10 +23,12 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -57,11 +59,27 @@ public class FeedCacheServiceImpl implements FeedCacheService {
     public List<PostDto> getFeedByUserId(Long userId, Long postId){
         List<Long> postIds = getFollowerPostIds(userId, postId);
 
-        List<PostDto> postDtos = postCacheService.getPostCacheByIds(postIds).stream()
+        Map<Long, PostDto> cachedPosts = postCacheService.getPostCacheByIds(postIds)
+                .stream()
                 .map(postCacheMapper::toDto)
+                .collect(Collectors.toMap(PostDto::getId, Function.identity()));
+
+        List<Long> missingIds = postIds.stream()
+                .filter(id -> !cachedPosts.containsKey(id))
                 .toList();
 
-        if(postDtos.isEmpty()){
+        if (!missingIds.isEmpty()) {
+            List<PostDto> dbPosts = postRepository.findAllById(missingIds)
+                    .stream()
+                    .map(postMapper::toDto)
+                    .toList();
+
+            postCacheService.saveAll(dbPosts.stream().map(postCacheMapper::toPostCache).toList());
+
+            dbPosts.forEach(post -> cachedPosts.put(post.getId(), post));
+        }
+
+        if(cachedPosts.isEmpty()){
             UserDto userDto = userService.getUserById(userId);
             List<Post> posts;
             if(postId == null){
@@ -69,11 +87,15 @@ public class FeedCacheServiceImpl implements FeedCacheService {
             } else {
                 posts = postRepository.findByAuthorsAndLimitAndStartFromPostId(userDto.getFolloweesIds(), batchSize, postId);
             }
-            postDtos = posts.stream()
+            return posts.stream()
                     .map(postMapper::toDto)
                     .toList();
         }
-        return postDtos;
+
+        return postIds.stream()
+                .filter(cachedPosts::containsKey)
+                .map(cachedPosts::get)
+                .collect(Collectors.toList());
     }
 
     @Override
