@@ -12,8 +12,8 @@
    - Cluster name – Kafka Cluster;
    - Bootstrap Servers  -  PLAINTEXT://kafka:29092
    - Metrics:
-      -metrics type -> JMX
-      -port -> 9997
+      - metrics type -> JMX
+      - port -> 9997
 5) У Redis'а в проиложении тоже есть свой UI. Для получения к нему доступа необходимо перейти по ссылке: http://localhost:5540/
 Примечание к 5-му пункту. Для подключения UI потребуется следующая настройка:
    - Нажимаем ADD REDIS DATABASE в левом верхнем углу -> Connection settings
