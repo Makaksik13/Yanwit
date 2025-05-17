@@ -17,7 +17,7 @@ CREATE TABLE comments (
     created_at timestamptz DEFAULT current_timestamp,
     updated_at timestamptz DEFAULT current_timestamp,
 
-    CONSTRAINT fk_post_id FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE
+    CONSTRAINT fk_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE
 );
 
 CREATE TABLE likes (
@@ -27,7 +27,7 @@ CREATE TABLE likes (
     created_at timestamptz DEFAULT current_timestamp,
     updated_at timestamptz DEFAULT current_timestamp,
 
-    CONSTRAINT fk_post_id FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE
+    CONSTRAINT fk_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE
 );
 
 CREATE TABLE subscriptions (
