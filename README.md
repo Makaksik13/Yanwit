@@ -9,16 +9,16 @@
 5. Также к Kafka’е в приложении подключен соответствующий UI, где вы можете увидеть много метрик, посмотреть содержимое различных топиков и многое другое.
 Доступ к нему можно получить перейдя по [ссылке](http://localhost:8082/ "http://localhost:8082/").  
 ***Примечание к 4-му пункту.*** Для подключения UI потребуется следующая настройка:
-   - ```Cluster name``` – Kafka Cluster
-   - Bootstrap Servers  -  PLAINTEXT://kafka:29092
+   - ```Cluster name```: Kafka Cluster
+   - ```Bootstrap Servers```: PLAINTEXT://kafka:29092
    - Metrics:
-      - metrics type -> JMX
-      - port -> 9997
+      - ```metrics type```: JMX
+      - ```port```: 9997
 5) У Redis'а в проиложении тоже есть свой UI. Для получения к нему доступа необходимо перейти по [ссылке](http://localhost:5540/ "http://localhost:5540/").  
 ***Примечание к 5-му пункту.*** Для подключения UI потребуется следующая настройка:
    - Нажимаем ADD REDIS DATABASE в левом верхнем углу -> Connection settings:
-       - HOST: host.docker.internal
-       - port: 6379
+       - ```HOST```: host.docker.internal
+       - ```port```: 6379
 ## Stack
 Java 17, Spring Boot 3, Hibernate ORM, Redis, Kafka, PostgreSQL, Docker, Maven, Lombok, MapStruct, Swagger, Git, Liquibase.
 
