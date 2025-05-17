@@ -16,7 +16,7 @@
       - ```port```: 9997
 5) У Redis'а в проиложении тоже есть свой UI. Для получения к нему доступа необходимо перейти по [ссылке](http://localhost:5540/ "http://localhost:5540/").  
 ***Примечание к 5-му пункту.*** Для подключения UI потребуется следующая настройка:
-   - Нажимаем ADD REDIS DATABASE в левом верхнем углу -> Connection settings:
+   - Нажимаем ```ADD REDIS DATABASE``` в левом верхнем углу, далее переходим в ```Connection settings```:
        - ```HOST```: host.docker.internal
        - ```port```: 6379
 ## Stack
