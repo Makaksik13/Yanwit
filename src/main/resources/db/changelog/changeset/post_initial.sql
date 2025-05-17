@@ -1,4 +1,4 @@
-CREATE TABLE post (
+CREATE TABLE posts (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY UNIQUE,
     content varchar(4096) NOT NULL,
     author_id bigint,
@@ -9,7 +9,7 @@ CREATE TABLE post (
     updated_at timestamptz DEFAULT current_timestamp
 );
 
-CREATE TABLE comment (
+CREATE TABLE comments (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY UNIQUE,
     content varchar(4096) NOT NULL,
     author_id bigint NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE likes (
     CONSTRAINT fk_post_id FOREIGN KEY (post_id) REFERENCES post (id) ON DELETE CASCADE
 );
 
-CREATE TABLE subscription (
+CREATE TABLE subscriptions (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY UNIQUE,
     follower_id bigint NOT NULL,
     followee_id bigint NOT NULL,
