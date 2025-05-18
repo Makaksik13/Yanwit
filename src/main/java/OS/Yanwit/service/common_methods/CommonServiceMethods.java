@@ -1,4 +1,4 @@
-package OS.Yanwit.service.CommonMethods;
+package OS.Yanwit.service.common_methods;
 
 import OS.Yanwit.exception.NotFoundException;
 import org.springframework.data.repository.CrudRepository;

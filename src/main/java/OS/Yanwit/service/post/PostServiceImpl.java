@@ -12,7 +12,7 @@ import OS.Yanwit.model.entity.Post;
 import OS.Yanwit.redis.cache.service.author.AuthorCacheService;
 import OS.Yanwit.redis.cache.service.post.PostCacheService;
 import OS.Yanwit.repository.PostRepository;
-import OS.Yanwit.service.CommonMethods.CommonServiceMethods;
+import OS.Yanwit.service.common_methods.CommonServiceMethods;
 import OS.Yanwit.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

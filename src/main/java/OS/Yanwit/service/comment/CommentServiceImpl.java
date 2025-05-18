@@ -11,7 +11,7 @@ import OS.Yanwit.model.entity.Post;
 import OS.Yanwit.redis.cache.service.author.AuthorCacheService;
 import OS.Yanwit.repository.CommentRepository;
 import OS.Yanwit.repository.PostRepository;
-import OS.Yanwit.service.CommonMethods.CommonServiceMethods;
+import OS.Yanwit.service.common_methods.CommonServiceMethods;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -60,7 +60,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "subscription",
+    @JoinTable(name = "subscriptions",
             joinColumns = @JoinColumn(name = "followee_id"), inverseJoinColumns = @JoinColumn(name = "follower_id"))
     //todo возможна проблема n+1, освежить в памяти ее решение. Возможно, EAGER не решит проблему, нужен JOIN FETCH
     private List<User> followers;

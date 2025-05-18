@@ -11,7 +11,7 @@ import OS.Yanwit.model.entity.Like;
 import OS.Yanwit.model.entity.Post;
 import OS.Yanwit.repository.LikeRepository;
 import OS.Yanwit.repository.PostRepository;
-import OS.Yanwit.service.CommonMethods.CommonServiceMethods;
+import OS.Yanwit.service.common_methods.CommonServiceMethods;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,9 +44,8 @@ public class LikeServiceImpl implements LikeService {
     public LikeDto addLikeOnPost(long userId, long postId) {
         LikeDto likeDto = createLikeDto(null, userId, dto -> dto.setPostId(postId));
 
-        if(!existsLikeOnPostFromUser(postId, userId)){
-            throw new RepeatLikeCreationException(String.format("Repeated attempt to create a like " +
-                    "on the post with id = %d by a user with id = %d", postId, userId));
+        if(existsLikeOnPostFromUser(postId, userId)){
+            throw new RepeatLikeCreationException(postId, userId);
         }
 
         Post post = commonServiceMethods.findEntityById(postRepository, postId, "Post");

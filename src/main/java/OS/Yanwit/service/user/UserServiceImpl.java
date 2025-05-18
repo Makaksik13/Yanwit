@@ -4,7 +4,7 @@ import OS.Yanwit.mapper.UserMapper;
 import OS.Yanwit.model.dto.UserDto;
 import OS.Yanwit.model.entity.User;
 import OS.Yanwit.repository.UserRepository;
-import OS.Yanwit.service.CommonMethods.CommonServiceMethods;
+import OS.Yanwit.service.common_methods.CommonServiceMethods;
 import com.google.common.hash.Hashing;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
