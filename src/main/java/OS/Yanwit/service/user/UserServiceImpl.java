@@ -39,11 +39,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto getUserById(long userId) {
         User user = commonServiceMethods.findEntityById(userRepository, userId, "User");
+        log.info("Getting user {}", user);
         return userMapper.toDto(user);
     }
 
     @Override
     public List<UserDto> getUsersByIds(List<Long> ids) {
+        log.info("Getting all users by ids {}", ids);
         return userRepository.findAllById(ids).stream()
                 .map(userMapper::toDto)
                 .toList();
@@ -53,6 +55,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserDto> getAllUsers(){
         List<User> users = userRepository.findAll();
+        log.info("Getting all users");
         return userMapper.toListDto(users);
     }
 
@@ -60,6 +63,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUserById(long userId) {
         userRepository.deleteById(userId);
+        log.info("Try to deleted user with id{}", userId);
+
     }
-    //todo добавь логирование для каждого метода
 }
