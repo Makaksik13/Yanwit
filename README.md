@@ -20,7 +20,7 @@
        - ```HOST```: host.docker.internal
        - ```port```: 6379
 ## Stack
-Java 17, Spring Boot 3, Hibernate ORM, Redis, Kafka, PostgreSQL, Docker, Maven, Lombok, MapStruct, Swagger, Git, Liquibase.
+Jav, Spring Boot, Hibernate ORM, Redis, Kafka, PostgreSQL, Docker, Maven, Lombok, MapStruct, Swagger, Git, Liquibase.
 
        
 
