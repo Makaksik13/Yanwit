@@ -19,8 +19,28 @@
    - Нажимаем ```ADD REDIS DATABASE``` в левом верхнем углу, далее переходим в ```Connection settings```:
        - ```HOST```: host.docker.internal
        - ```port```: 6379
+## Структура проекта
+```
+Yanwit/src/
+├── main/                   
+    ├── java/OS/Yanwit/              
+    │    ├── config/                     # Файлы конфигурации Redis, Kafka и Executors  
+    │    ├── controller/                 # Контроллеры
+    │	 ├── exception/                  # Классы исключений и глобальный обработчик ошибок
+    │	 ├── kafka/                      # Создание бинов Kafka- топиков, производителей и потребителей 
+    │	 ├── mapper/                     # Интерфейсы MapStruct (мапперы)
+    │    ├── model/                      # Модели данных
+    │    ├── property/                   # Property-POJO 
+    │    ├── redis/cache/                # Классы и интерфейсы для взаимодействия с Redis
+    │    ├── repository/                 # Репозитории 
+    │    ├── service/                    # Бизнес-логика    
+    │    └── YanwitApplication.java      # Точка входа в приложение
+    └── resources
+         ├── db/changelog                # Миграции
+         └── application.yaml            # Файл конфигурации приложения         
+```  
 ## Stack
-Java, Spring Boot, Hibernate ORM, Redis, Kafka, PostgreSQL, Docker, Maven, Lombok, MapStruct, Swagger, Git, Liquibase.
+Java, Spring Boot, Hibernate ORM, Redis, Kafka, PostgreSQL, Docker, Maven, Lombok, MapStruct, Swagger, Git, Liquibase, JUnit5, Mockito, AssertJ.
 
        
 
