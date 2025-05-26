@@ -1,4 +1,4 @@
-package OS.Yanwit.exception.responce;
+package OS.Yanwit.exception.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

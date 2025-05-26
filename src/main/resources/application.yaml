@@ -27,13 +27,13 @@ spring:
         cache-settings:
           authors:
             name: authors
-            ttl: 5000
+            ttl: 3600
           posts:
             name: posts
-            ttl: 9000
+            ttl: 7200
           feed:
             name: feed
-            ttl: 3000
+            ttl: 10800
         settings:
           max-feed-size: 500
           batch-size: 20
@@ -63,8 +63,6 @@ spring:
             name: post-likes
           posts:
             name: posts
-          post-views:
-            name: post-views
           comments:
             name: comments
           split:
@@ -128,6 +126,9 @@ batches:
 springdoc:
   parameter-object:
     convert-to-spring-annotation: false
+  springdoc:
+    packages-to-scan: OS/Yanwit/exception/response
+
 
 
 

@@ -144,7 +144,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
 
         lock(() -> {
             long score = -1 * postId;
-            redisFeedZSetOps.removeRange(feedCacheKey, score, score);
+            redisFeedZSetOps.removeRangeByScore(feedCacheKey, score, score);
         }, feedCacheKey);
     }
 
@@ -167,7 +167,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
         lock(() -> {
             postIds.forEach(postId -> {
                 long score = -1 * postId;
-                redisFeedZSetOps.removeRange(feedCacheKey, score, score);
+                redisFeedZSetOps.removeRangeByScore(feedCacheKey, score, score);
             });
         }, feedCacheKey);
     }

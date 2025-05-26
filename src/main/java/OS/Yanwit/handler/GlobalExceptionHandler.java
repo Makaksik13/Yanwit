@@ -1,10 +1,13 @@
-package OS.Yanwit.exception.handler;
+package OS.Yanwit.handler;
 
 import OS.Yanwit.exception.NotFoundException;
 import OS.Yanwit.exception.RepeatLikeCreationException;
-import OS.Yanwit.exception.responce.ErrorResponse;
-import OS.Yanwit.exception.responce.ValidationErrorResponse;
-import OS.Yanwit.exception.responce.Violation;
+import OS.Yanwit.exception.response.ErrorResponse;
+import OS.Yanwit.exception.response.ValidationErrorResponse;
+import OS.Yanwit.exception.response.Violation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +25,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    @ApiResponse(
+            responseCode = "400",
+            description = "Ошибка валидации",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ValidationErrorResponse.class) // Явная ссылка на схему
+            )
+    )
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ValidationErrorResponse handleConstraintValidationException(ConstraintViolationException e) {
@@ -51,7 +61,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RepeatLikeCreationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleRepeatLikeCreationException(RepeatLikeCreationException e, HttpServletRequest request) {
-        log.error("Not found exception", e);
+        log.error("Repeat like creation exception", e);
         return buildErrorResponse(e, request, HttpStatus.NOT_FOUND);
     }
 
@@ -77,5 +87,4 @@ public class GlobalExceptionHandler {
                 .message(e.getMessage())
                 .build();
     }
-
 }

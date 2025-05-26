@@ -64,6 +64,5 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(long userId) {
         userRepository.deleteById(userId);
         log.info("Try to deleted user with id{}", userId);
-
     }
 }
