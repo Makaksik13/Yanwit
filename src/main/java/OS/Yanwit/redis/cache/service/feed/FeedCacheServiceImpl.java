@@ -55,6 +55,13 @@ public class FeedCacheServiceImpl implements FeedCacheService {
     private final UserService userService;
     private final PostMapper postMapper;
 
+    private void adjustToSize(String feedCacheKey) {
+        Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
+        if (setSize != null && setSize > maxFeedSize) {
+            redisFeedZSetOps.removeRange(feedCacheKey, maxFeedSize, setSize);
+        }
+    }
+
     @Override
     public List<PostDto> getFeedByUserId(Long userId, Long postId){
         List<Long> postIds = getFollowerPostIds(userId, postId);
@@ -109,12 +116,11 @@ public class FeedCacheServiceImpl implements FeedCacheService {
             long ttl = resolveTtl();
             redisTemplate.expire(feedCacheKey, ttl, TimeUnit.SECONDS);
 
-            Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
-            if (setSize != null && setSize > maxFeedSize) {
-                redisFeedZSetOps.removeRange(feedCacheKey, maxFeedSize, setSize);
-            }
+            adjustToSize(feedCacheKey);
         }, feedCacheKey);
     }
+
+
 
     @Override
     @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 5, backoff = @Backoff(delay = 500, multiplier = 3))
@@ -129,10 +135,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
                     long ttl = resolveTtl();
                     redisTemplate.expire(feedCacheKey, ttl, TimeUnit.SECONDS);
 
-                    Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
-                    if (setSize != null && setSize > maxFeedSize) {
-                        redisFeedZSetOps.removeRange(feedCacheKey, maxFeedSize, setSize);
-                    }
+                    adjustToSize(feedCacheKey);
                 });
         }, feedCacheKey);
     }
