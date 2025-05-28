@@ -100,7 +100,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
 
     @Override
     @Retryable(retryFor = {OptimisticLockException.class}, maxAttempts = 5, backoff = @Backoff(delay = 500, multiplier = 3))
-    public void addPostIdToFollowerFeed(Long postId, Long subscriberId){
+    public void addPostIdToFollowerFeed(Long postId, Long subscriberId) {
         String feedCacheKey = generateFeedCacheKey(subscriberId);
         long score = postId * (-1);
 
@@ -111,7 +111,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
 
             Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
             if (setSize != null && setSize > maxFeedSize) {
-                redisFeedZSetOps.removeRange(feedCacheKey, 0, setSize - maxFeedSize);
+                redisFeedZSetOps.removeRange(feedCacheKey, maxFeedSize, setSize);
             }
         }, feedCacheKey);
     }
@@ -131,7 +131,7 @@ public class FeedCacheServiceImpl implements FeedCacheService {
 
                     Long setSize = redisFeedZSetOps.zCard(feedCacheKey);
                     if (setSize != null && setSize > maxFeedSize) {
-                        redisFeedZSetOps.removeRange(feedCacheKey, 0, setSize - maxFeedSize);
+                        redisFeedZSetOps.removeRange(feedCacheKey, maxFeedSize, setSize);
                     }
                 });
         }, feedCacheKey);
